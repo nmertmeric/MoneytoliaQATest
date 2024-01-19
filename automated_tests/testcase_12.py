@@ -1,16 +1,22 @@
+import time
+
 import pytest
 from selenium import webdriver
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.wait import WebDriverWait
 
+"""
+Selecting a product index starts with 2 and increase by 1 up to 35 regarding
+the products' "Add to card" buttons' xpath locations.
+Therefore, when we count the products' indexes from left to right, we are able to see the
+which product has the correct index number for "Add to card" buttons' xpath locations.
+"""
 
-# Selecting a product index starts with 2 and increase by 1 up to 35 regarding
-# the products' "Add to card" buttons' xpath locations.
-# Therefore, when we count the products' indexes from left to right, we are able to see the
-# which product has the correct index number for "Add to card" buttons' xpath locations.
+
 def select_a_product_from_all_products(index):
+    time.sleep(3)
     product = driver.find_element("xpath", "/html/body/section[2]/div[1]/div/div[2]/div/div[" + str(index) +
                                   "]/div/div[1]/div[1]/a")
     return product
@@ -35,33 +41,41 @@ def maximize_window_enter_url():
 
 
 def hover_action_and_add_to_card_a_product_from_all_products(index):
+    time.sleep(3)
+    # for ignoring the ads and pop-ups
     driver.execute_script("arguments[0].scrollIntoView({block: 'center'})", select_a_product_from_all_products(2))
-    wait = WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
+    wait = WebDriverWait(driver, 10).until(ec.element_to_be_clickable(
         (By.XPATH, "/html/body/section[2]/div[1]/div/div[2]/div/div[" + str(index) +
          "]/div/div[1]/div[1]/a")))
+    time.sleep(3)
     hover_action = ActionChains(driver).move_to_element(wait)
     hover_action.perform()
-    add_to_card_button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
+    add_to_card_button = WebDriverWait(driver, 10).until(ec.element_to_be_clickable(
         (By.XPATH, "/html/body/section[2]/div[1]/div/div[2]/div/div[" + str(index) +
          "]/div/div[1]/div[2]/div/a")))
+    time.sleep(3)
     add_to_card_button.click()
 
 
 def continue_shopping_button():
-    continue_shopping = WebDriverWait(driver, 10).until(EC.element_to_be_clickable(
+    continue_shopping = WebDriverWait(driver, 10).until(ec.element_to_be_clickable(
         (By.XPATH, "//*[@id=\"cartModal\"]/div/div/div[3]/button")))
+    time.sleep(3)
     continue_shopping.click()
 
 
 def view_card_button():
     view_card = WebDriverWait(driver, 10).until(
-        EC.element_to_be_clickable((By.XPATH, "//*[@id=\"cartModal\"]/div/div/div[2]/p[2]/a/u")))
+        ec.element_to_be_clickable((By.XPATH, "//*[@id=\"cartModal\"]/div/div/div[2]/p[2]/a/u")))
+    time.sleep(3)
     view_card.click()
 
 
 def products_are_added_to_card(product_id):
-    WebDriverWait(driver, 10).until(EC.visibility_of_all_elements_located(
+    WebDriverWait(driver, 10).until(ec.visibility_of_all_elements_located(
         (By.XPATH, "//*[@id=\"product-" + str(product_id) + "\"]/td[2]/h4/a")))
+    time.sleep(3)
+    # for ignoring the ads and pop-ups
     driver.execute_script("arguments[0].scrollIntoView({block: 'center'})", "//*[@id=\"do_action\"]/div[1]/div/div/a")
     added_product = driver.find_element("xpath", "//*[@id=\"product-" + str(product_id) + "\"]/td[2]/h4/a").text
     print(added_product)
@@ -96,8 +110,8 @@ class AutomationTest:
     pass
 
 
-class Test_with_different_browsers(AutomationTest):
-    def test_12(Automation_Test):
+class TestWithDifferentBrowsers(AutomationTest):
+    def test_12(self):
         maximize_window_enter_url()
         hover_action_and_add_to_card_a_product_from_all_products(2)
         continue_shopping_button()
